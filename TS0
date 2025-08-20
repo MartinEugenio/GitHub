@@ -1,0 +1,20 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+def sen(amp,dc,ff,ph,nn,fs):
+    ##Amplitud, desplazamiento, frecuencia, diferencia de fase en radianes,
+    ##mero de muestras, frecuencia de muestreo
+    n=np.arange(nn)
+    t=n/fs
+    x= dc + amp*np.sin(2*np.pi*ff*t+ph)
+    
+    return t,x
+
+tt,xx=sen(np.sqrt(2),0,1,np.pi/2,1000,1000)
+
+E = np.sum(xx**2)/1000
+print(E)
+plt.title("N=500")
+plt.plot(tt, xx)
+plt.grid(True)
+plt.show()
