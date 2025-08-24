@@ -1,0 +1,61 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+fs = 1000
+N = fs
+
+
+def sen(amp, dc, ff, ph, nn, fs): #Definicion del seno base
+    ##Amplitud, desplazamiento, frecuencia, diferencia de fase en radianes,
+    ##numero de muestras, frecuencia de muestreo
+    N=np.arange(nn)
+    t=N/fs
+    x= dc + amp*np.sin(2*np.pi*ff*t+ph)
+   
+    return t,x
+
+
+#Ondas 1 y 2
+
+t1,x1=sen(1,0,2000,0,500,200000)# Onda consigna 1
+t2,x2=sen(2,0,2000,np.pi/2,500,200000) # Onda consigna 2
+
+
+#Funciones de recorte
+
+aMax = np.sqrt(0.75)
+aMin = -aMax
+ondaRcrt =np.clip(x2, aMin, aMax)
+
+
+#Ondas 3, 4 y 5
+
+ondaMdldr = np.sin(N*np.pi)#Onda moduladora
+t3,x3=sen(ondaMdldr,0,2000,0,500,200000) # Onda consigna 3 (No funciona)
+t4,x4=np.clip(sen(2,0,2000, np.pi/2 ,500,200000), aMin, aMax) #Onda consigna 4
+t5,x5=sen(1,0,4000,0,5000,2000000) #Onda consigna 5 (Sin cuadrar)
+ondaCdr = np.sign(x5) #Funcion que hace cuadrada la onda anterior
+
+t6 = np.linspace(0,1,1000)
+x6 = np.where((t6>=0.010) & (t6<=0.020),1,0)
+
+
+fig, axes = plt.subplots(nrows=6, ncols=1)
+
+axes[0].plot(t1,x1, color='red')
+axes[0].set_title('Seno de freq. 2KHz')
+axes[1].plot(t2,x2, color = 'blue')
+axes[1].set_title('Seno de Amplitud 2 y desfase π/2')
+axes[2].plot(t3,x3, color='green')
+axes[2].set_title('Onda modulada')
+axes[3].plot(t4,x4, color='purple')
+axes[3].set_title('Onda 2 clipeada al 75% de su potencia')
+axes[4].plot(t5,ondaCdr, color='orange')
+axes[4].set_title('Onda cuadrada de 4Khz')
+axes[5].plot(t6,x6, color='black')
+axes[5].set_title('Pulso de 10 ms')
+
+
+plt.tight_layout()
+plt.show()
